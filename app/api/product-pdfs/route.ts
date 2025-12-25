@@ -13,7 +13,7 @@ export async function OPTIONS() {
 
 export async function GET(req: NextRequest) {
   try {
-    /* 1️⃣ Get params */
+    /* 1️⃣ Params */
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search")?.toLowerCase() || "";
 
@@ -21,27 +21,25 @@ export async function GET(req: NextRequest) {
       req.headers.get("x-shopify-shop-domain") ||
       searchParams.get("shop");
 
-    if (!rawShop) {
-      return NextResponse.json(
-        { success: false, message: "Shop is required" },
-        { status: 400, headers: corsHeaders }
-      );
-    }
+    const shop = rawShop
+      ? rawShop.replace(/^https?:\/\//, "")
+      : null;
 
-    const shop = rawShop.replace(/^https?:\/\//, "");
+    /* 2️⃣ Dynamic WHERE clause */
+    const whereCondition = shop ? { shop } : {};
 
-    /* 2️⃣ Fetch ONLY shop data */
+    /* 3️⃣ Fetch data */
     const products = await prisma.productPDF.findMany({
-      where: { shop },
+      where: whereCondition,
       orderBy: { createdAt: "desc" },
     });
 
-    /* 3️⃣ Flatten PDFs */
+    /* 4️⃣ Flatten PDFs */
     let rows = products.flatMap((product) => {
       if (!Array.isArray(product.pdfs)) return [];
 
       return product.pdfs.map((pdf: any) => ({
-        shop,
+        shop: product.shop,
 
         productId: product.productId,
         productTitle: product.productTitle || "",
@@ -64,7 +62,7 @@ export async function GET(req: NextRequest) {
       }));
     });
 
-    /* 4️⃣ Apply SEARCH (shop-safe) */
+    /* 5️⃣ Search filter (safe for both modes) */
     if (search) {
       rows = rows.filter((row) =>
         row.productTitle.toLowerCase().includes(search) ||
@@ -75,12 +73,13 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    /* 6️⃣ Response */
     return NextResponse.json(
       {
         success: true,
         data: rows,
         meta: {
-          shop,
+          shop: shop ?? "ALL",
           search,
           totalResults: rows.length,
         },
@@ -93,9 +92,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to search shop data",
+        message: "Failed to search data",
       },
       { status: 500, headers: corsHeaders }
     );
   }
 }
+

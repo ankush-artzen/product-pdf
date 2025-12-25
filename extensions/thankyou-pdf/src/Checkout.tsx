@@ -60,8 +60,6 @@ function Extension() {
   const translate = useTranslate();
   const { extension } = useApi();
   const cartLines = useCartLines();
-  const { shop } = useApi();
-  const shopDomain = shop?.myshopifyDomain;
 
   const [pdfData, setPdfData] = useState<PDFData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,29 +68,18 @@ function Extension() {
   const [downloadLinks, setDownloadLinks] = useState<Record<string, string>>(
     {}
   );
-
   const appurl = `https://product-pdf.vercel.app`;
-  useEffect(() => {
-    if (!shopDomain) return;
-    fetchPDFs();
-  }, [shopDomain]);
-
   const fetchPDFs = async () => {
-    if (!shopDomain) return;
-
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(
-        `${appurl}/api/product-pdfs?shop=${encodeURIComponent(shopDomain)}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${appurl}/api/product-pdfs`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -147,71 +134,39 @@ function Extension() {
   //     setDownloading(prev => ({ ...prev, [variantId]: false }));
   //   }
   // };
-  // const handleDownloadPDF = async (variantId: string, pdfId: string) => {
-  //   try {
-  //     setDownloading((prev) => ({ ...prev, [variantId]: true }));
-
-  //     // 1️⃣ Create token
-  //     const tokenRes = await fetch(`${appurl}/api/download`, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         variantId,
-  //         pdfId,
-  //       }),
-  //     });
-
-  //     if (!tokenRes.ok) throw new Error("Token creation failed");
-
-  //     const { token } = await tokenRes.json();
-
-  //     // 2️⃣ Redirect browser to download URL
-  //     const downloadLink = `${appurl}/api/download/${token}`;
-
-  //     setDownloadLinks((prev) => ({ ...prev, [variantId]: downloadLink }));
-  //     // Option B: If you have access to the order object, you might want to
-  //     // use Shopify's download capabilities
-  //     console.log("Download initiated for", variantId);
-  //   } catch (err) {
-  //     console.error("Download error:", err);
-  //     setError("Unable to download file. Link may be expired.");
-  //   } finally {
-  //     setDownloading((prev) => ({ ...prev, [variantId]: false }));
-  //   }
-  // };
   const handleDownloadPDF = async (variantId: string, pdfId: string) => {
-    if (!shopDomain) return;
-  
     try {
-      setDownloading(prev => ({ ...prev, [variantId]: true }));
-  
+      setDownloading((prev) => ({ ...prev, [variantId]: true }));
+
+      // 1️⃣ Create token
       const tokenRes = await fetch(`${appurl}/api/download`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          shop: shopDomain,
           variantId,
           pdfId,
         }),
       });
-  
+
       if (!tokenRes.ok) throw new Error("Token creation failed");
-  
+
       const { token } = await tokenRes.json();
-  
-      const downloadLink = `${appurl}/api/download/${token}?shop=${encodeURIComponent(
-        shopDomain
-      )}`;
-  
-      setDownloadLinks(prev => ({ ...prev, [variantId]: downloadLink }));
+
+      // 2️⃣ Redirect browser to download URL
+      const downloadLink = `${appurl}/api/download/${token}`;
+
+      setDownloadLinks((prev) => ({ ...prev, [variantId]: downloadLink }));
+      // Option B: If you have access to the order object, you might want to
+      // use Shopify's download capabilities
+      console.log("Download initiated for", variantId);
     } catch (err) {
       console.error("Download error:", err);
       setError("Unable to download file. Link may be expired.");
     } finally {
-      setDownloading(prev => ({ ...prev, [variantId]: false }));
+      setDownloading((prev) => ({ ...prev, [variantId]: false }));
     }
   };
-  
+
   const getMatchingPDFs = (): EnhancedCartItem[] => {
     if (!cartLines || !pdfData.length) return [];
 
