@@ -867,7 +867,7 @@ export default function EditPDFPage() {
 
                               {/* Status badge */}
                               {hasExistingPdf ? (
-                                <Badge tone="critical">PDF Exists</Badge>
+                                <Badge tone="critical">PDF Atready Attached to this </Badge>
                               ) : isSelected ? (
                                 <Badge tone="success">Selected</Badge>
                               ) : (

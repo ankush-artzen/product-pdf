@@ -15,7 +15,13 @@ export async function GET(req: NextRequest) {
   try {
     /* 1️⃣ Params */
     const { searchParams } = new URL(req.url);
+
     const search = searchParams.get("search")?.toLowerCase() || "";
+
+    // ✅ pagination params (ADDED)
+    const page = Math.max(Number(searchParams.get("page")) || 1, 1);
+    const limit = Math.max(Number(searchParams.get("limit")) || 10, 1);
+    const skip = (page - 1) * limit;
 
     const rawShop =
       req.headers.get("x-shopify-shop-domain") ||
@@ -62,7 +68,7 @@ export async function GET(req: NextRequest) {
       }));
     });
 
-    /* 5️⃣ Search filter (safe for both modes) */
+    /* 5️⃣ Search filter (UNCHANGED) */
     if (search) {
       rows = rows.filter((row) =>
         row.productTitle.toLowerCase().includes(search) ||
@@ -73,15 +79,22 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // ✅ pagination slice (ADDED)
+    const totalResults = rows.length;
+    const paginatedRows = rows.slice(skip, skip + limit);
+
     /* 6️⃣ Response */
     return NextResponse.json(
       {
         success: true,
-        data: rows,
+        data: paginatedRows,
         meta: {
           shop: shop ?? "ALL",
           search,
-          totalResults: rows.length,
+          totalResults,
+          page,
+          limit,
+          totalPages: Math.ceil(totalResults / limit),
         },
       },
       { headers: corsHeaders }
@@ -98,4 +111,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
