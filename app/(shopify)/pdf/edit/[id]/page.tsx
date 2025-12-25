@@ -379,7 +379,9 @@ export default function EditPDFPage() {
     }
 
     // Show review modal before final save
-    setShowReviewModal(true);
+    // setShowReviewModal(true);
+    await handleFinalSave();
+
   };
 
   // Final save for bulk uploads

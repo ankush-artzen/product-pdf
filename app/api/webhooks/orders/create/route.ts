@@ -32,7 +32,6 @@ async function getBestTemplate(shop: string, lineItems: any[]) {
       .sort((a, b) => b[1] - a[1])
       .map(([lang]) => lang);
 
-    // Try each language in order until we find a template
     for (const lang of sortedLanguages) {
       if (SUPPORTED_LANGUAGES.includes(lang)) {
         const template = await prisma.template.findUnique({
