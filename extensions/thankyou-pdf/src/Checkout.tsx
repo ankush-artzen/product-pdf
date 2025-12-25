@@ -68,7 +68,7 @@ function Extension() {
   const [downloadLinks, setDownloadLinks] = useState<Record<string, string>>(
     {}
   );
-  const appurl = `https://caroline-obtain-linear-repair.trycloudflare.com`;
+  const appurl = `https://product-pdf.vercel.app`;
   const fetchPDFs = async () => {
     try {
       setLoading(true);

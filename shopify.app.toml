@@ -1,10 +1,10 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "ee6168206fe0f99ba138522cecdaa717"
-name = "next-test-app"
-application_url = "https://province-trinity-alive-searched.trycloudflare.com"
+client_id = "9a69460117797789606b402385dbc86e"
+name = "product-pdf-app-1"
+application_url = "https://product-pdf.vercel.app"
 embedded = true
-handle = "next-test-app-5"
+handle = "product-pdf-app-2"
 
 [build]
 automatically_update_urls_on_dev = true
@@ -24,9 +24,9 @@ use_legacy_install_flow = false
 
 [auth]
 redirect_urls = [
-  "https://province-trinity-alive-searched.trycloudflare.com/auth/callback",
-  "https://province-trinity-alive-searched.trycloudflare.com/auth/shopify/callback",
-  "https://province-trinity-alive-searched.trycloudflare.com/api/auth/callback"
+  "https://product-pdf.vercel.app/auth/callback",
+  "https://product-pdf.vercel.app/auth/shopify/callback",
+  "https://product-pdf.vercel.app/api/auth/callback"
 ]
 
 [pos]
