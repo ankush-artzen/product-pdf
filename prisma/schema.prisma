@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+}
+
+model Session {
+  id               String            @id @map("_id")
+  accessToken      String? 
+  expires          DateTime?
+  isOnline         Boolean
+  scope            String?
+  shop             String
+  state            String
+  apiKey           String
+  onlineAccessInfo OnlineAccessInfo?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model OnlineAccessInfo {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  session             Session?        @relation(fields: [sessionId], references: [id])
+  sessionId           String?         @unique
+  expiresIn           Int
+  associatedUserScope String
+  associatedUser      AssociatedUser?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model AssociatedUser {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  onlineAccessInfo   OnlineAccessInfo? @relation(fields: [onlineAccessInfoId], references: [id])
+  onlineAccessInfoId String?           @unique
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  userId             BigInt
+  firstName          String
+  lastName           String
+  email              String
+  accountOwner       Boolean
+  locale             String
+  collaborator       Boolean
+  emailVerified      Boolean
+}
+
+model StoreSetting {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  isActive  Boolean
+  shop      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model ProductPDF {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId     String   @unique
+  shop          String  
+  productTitle  String
+  productImage  String
+  productPrice  String
+  pdfs          PDF[]
+    variants Json?  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+type PDF {
+  id            String
+  name          String
+  size          String
+  url           String
+  uploadedAt    DateTime
+  path          String
+
+  // Variant information (no @unique inside type)
+  variantId     String
+  variantTitle  String
+  variantPrice  String?
+}
+
+model Template {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  shop      String
+  language  String
+  subject   String
+  template  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([shop, language])
+}
+
+
+model Order {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  shop           String
+  orderId        String
+  orderName      String
+  currency       String?
+  variantId      String?
+  Amount         Float?
+  customerEmail  String?     // Add this
+  customerName   String?     // Add this
+  emailSent      Boolean     @default(false)  // Add this to track if email was sent
+  sentAt         DateTime?   // Add this for when email was sent
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  downloadTokens DownloadToken[]
+
+  @@index([shop, orderId])
+}
+
+model DownloadToken {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  token     String   @unique
+  pdfId     String
+  orderId   String
+  productTitle String
+  pdfName   String
+  maxUses     Int      @default(10)
+  usedCount   Int      @default(0)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+

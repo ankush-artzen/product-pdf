@@ -1,0 +1,33 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "ee6168206fe0f99ba138522cecdaa717"
+name = "next-test-app"
+application_url = "https://province-trinity-alive-searched.trycloudflare.com"
+embedded = true
+handle = "next-test-app-5"
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "karan-working.myshopify.com"
+
+[webhooks]
+api_version = "2025-04"
+
+[access.admin]
+direct_api_mode = "offline"
+embedded_app_direct_api_access = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_orders,write_orders,"
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [
+  "https://province-trinity-alive-searched.trycloudflare.com/auth/callback",
+  "https://province-trinity-alive-searched.trycloudflare.com/auth/shopify/callback",
+  "https://province-trinity-alive-searched.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
