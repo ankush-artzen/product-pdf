@@ -95,8 +95,7 @@ export function PDFUploadSection({
                   Upload your PDF file
                 </Text>
                 <Text as="p" variant="bodySm" tone="subdued" alignment="center">
-                  Maximum file size: 10MB • One PDF per variant • PDF format
-                  only
+                  Attach One PDF per variant only
                 </Text>
               </BlockStack>
 
@@ -127,8 +126,6 @@ export function PDFUploadSection({
                   <Text as="p" variant="headingSm" fontWeight="bold">
                     Uploaded PDFs ({uploadedPDFs.length})
                   </Text>
-
-                
                 </InlineStack>
 
                 {/* <Text as="p" variant="bodySm" tone="subdued">
@@ -169,7 +166,6 @@ export function PDFUploadSection({
                               <Badge tone="success">
                                 {`Variant: ${variantInfo?.variantTitle || "Unknown"}`}
                               </Badge>
-                           
                             </InlineStack>
                           </BlockStack>
                         </InlineStack>
@@ -184,28 +180,27 @@ export function PDFUploadSection({
                           />
                         </InlineStack>
                       </InlineStack>
-                      
                     </Card>
                   );
                 })}
-                  <InlineStack gap="200" align="end">
-                    <Button
-                      tone="critical"
-                      variant="plain"
-                      size="slim"
-                      onClick={onClearAll}
-                    >
-                      Remove 
-                    </Button>
-                    <Button
-                      variant="primary"
-                      tone="success"
-                      onClick={onReviewAndSave}
-                      loading={isUploading}
-                    >
-                      Review & Save
-                    </Button>
-                  </InlineStack>
+                <InlineStack gap="200" align="end">
+                  <Button
+                    tone="critical"
+                    variant="plain"
+                    size="slim"
+                    onClick={onClearAll}
+                  >
+                    Remove
+                  </Button>
+                  <Button
+                    variant="primary"
+                    tone="success"
+                    onClick={onReviewAndSave}
+                    loading={isUploading}
+                  >
+                    Review & Save
+                  </Button>
+                </InlineStack>
               </BlockStack>
             </Card>
           )}

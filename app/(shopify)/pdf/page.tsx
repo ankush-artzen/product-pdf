@@ -108,6 +108,7 @@ export default function ProductPDFListPage() {
 console.log("shopppppppp",shop)
   console.log("shopppppppp", shop);
 
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -117,13 +118,16 @@ console.log("shopppppppp",shop)
         console.error("Shop not available");
         return;
       }
-
-      const response = await fetch("/api/product-pdfs", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `/api/product-pdfs?shop=${encodeURIComponent(shop)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -188,7 +192,6 @@ console.log("shopppppppp",shop)
       fetchProducts();
     }
   }, [shop]);
-
   const handleRefresh = () => {
     setRefreshing(true);
     fetchProducts();
