@@ -4,15 +4,17 @@
   "license": "MIT",
   "scripts": {
     "dev": "shopify app dev",
-    "info": "shopify app info",
-    "build": "shopify app build",
-    "generate": "shopify app generate",
+    "build": "prisma generate && next build",
     "deploy": "shopify app deploy",
-    "docker-dev": "docker compose up -d",
-    "migrate": "prisma db push",
-    "postinstall": "prisma generate",
-    "graphql-codegen": "graphql-codegen --config codegen.ts",
-    "start": "next start"
+    "info": "shopify app info",
+    "generate": "shopify app generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma db push",
+    "prisma:studio": "prisma studio",
+    "graphql:codegen": "graphql-codegen --config codegen.ts",
+    "docker:dev": "docker compose up -d",
+    "start": "next start",
+    "postinstall": "prisma generate"
   },
   "author": "artzen",
   "keywords": [
