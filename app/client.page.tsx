@@ -325,7 +325,7 @@ export default function PDFManagerHomePage() {
                       size="large"
                       variant="primary"
                       icon={NoteIcon}
-                      url="/pdf/email"
+                      url="/email"
                       fullWidth
                     >
                       Set Template
